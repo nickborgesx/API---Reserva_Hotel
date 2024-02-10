@@ -1,0 +1,46 @@
+CREATE TABLE IF NOT EXISTS hotel (
+    ID SERIAL PRIMARY KEY,
+    nome VARCHAR(255),
+    rua VARCHAR(255),
+	bairro VARCHAR(255),
+	cidade VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS quarto(
+    ID SERIAL PRIMARY KEY,
+    numero VARCHAR(255),
+    capacidade VARCHAR(255),
+	disponivel boolean NOT NULL,
+	hotel_id INT REFERENCES hotel (ID)
+);
+
+CREATE TABLE IF NOT EXISTS hospede (
+    id serial primary key,
+    nome varchar(255),
+    email varchar(255),
+    cpf varchar(255),
+    telefone varchar(255)
+);
+
+CREATE TABLE IF NOT EXISTS reserva (
+    ID SERIAL PRIMARY KEY,
+    entrada DATE NOT NULL,
+    saida DATE NOT NULL,
+    valor DECIMAL(10, 2) NOT NULL,
+    quarto_id INT REFERENCES quarto (ID),
+    hospede_id INT REFERENCES hospede (ID)
+
+);
+
+
+INSERT INTO hotel (nome, rua, bairro, cidade) VALUES
+    ('Hotel dos Caba', 'Água Vermelha', 'Itaparica', 'Jatobá');
+	
+INSERT INTO quarto (numero, capacidade, disponivel, hotel_id) VALUES
+    (1, 2, TRUE, 1);
+
+INSERT INTO hospede (nome, email, cpf, telefone) VALUES
+    ('Nicolas Borges', 'nicolas.borges@ufrpe.br', '12647855420', '87981537586');
+	
+INSERT INTO reserva (entrada, saida, valor, quarto_id, hospede_id) VALUES
+    ('2024-05-01', '2024-05-07', 500.00, 1, 1);
