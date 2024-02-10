@@ -1,6 +1,6 @@
 Sistema de Reserva de Hotel - API
 
-um projeto simples, explorando a concepção de uma API em um sistema refinado de reservas de hotel
+Um projeto simples, explorando a concepção de uma API em um sistema refinado de reservas de hotel
 
 O projeto contém 4 tabelas no banco de dados:
 
