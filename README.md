@@ -1,34 +1,30 @@
-Sistema de Reserva de Hotel - API
+*Sistema de Reserva de Hotel - API*
 
-Um projeto simples, explorando a concepção de uma API em um sistema refinado de reservas de hotel
+Este é um projeto simples que explora a implementação de uma API em um sistema refinado de reservas de hotel.
 
-O projeto contém 4 tabelas no banco de dados:
+Estrutura do Banco de Dados
+O projeto inclui quatro tabelas no banco de dados:
 
-Hospede -(Representa os hospedes)
-Hotel - ()
-Quarto -(Representa o quarto do hotel onde haverá a reserva)
-Reserva - (Representa a reserva de um quarto ou mais quartos)
+    Hospede - Representa os hóspedes.
+    Hotel - []
+    Quarto - Representa os quartos do hotel onde as reservas serão efetuadas.
+    Reserva - Representa a reserva de um ou mais quartos.
 
+*Tabela: Hospede*
+id: Chave primária, não repetível e autoincrementada pelo banco de dados.
+nome: Nome do hóspede.
+email: Email do hóspede.
+cpf: CPF do hóspede.
+telefone: Telefone do hóspede.
 
-Hospede:
-
-id - Chave Primária, não repetível e auto incrementário pelo banco de dados.
-nome - nome do hóspede.
-email - email do hóspede.
-cpf - cpf do hóspede.
-telefone: cpf do hóspede.
-
---------------------------------------------------------------------------
-
+*Endpoints da API*
 Hospede/
-    GET - Retorna todos os hóspede cadastrados.
+GET: Retorna todos os hóspedes cadastrados.
 Hospede/id/<id>
-    GET - Reporta um hóspede baseado no ID escolhido.
+GET: Retorna informações de um hóspede com base no ID escolhido.
 Hospede/create
-    POST - Cria um hóspede pasando os parâmetros escolhidos.
+POST: Cria um novo hóspede, passando os parâmetros escolhidos.
 Hospede/delete/<id>
-    DELETE - Deleta um hóspede baseado no ID escolhido.
+DELETE: Deleta um hóspede com base no ID escolhido.
 Hospede/update/<id>
-    PUT - Atualiza um hóspede baseado no ID escolhido.
-    
-
+PUT: Atualiza as informações de um hóspede com base no ID escolhido.
