@@ -36,7 +36,11 @@ class DAOHospede(SQLHospede):
         query = self._DELETE_BY_CPF
         cursor = self.connection.cursor()
         cursor.execute(query, (cpf,))
-        self.connection.commit()
+        if cursor.rowcount > 0:
+            self.connection.commit()
+            return True
+        else:
+            return False
 
     def update(self, cpf, novo_hospede_dados):
         hospede_existente = self.get_by_cpf(cpf)
