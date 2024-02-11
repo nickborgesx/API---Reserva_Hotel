@@ -1,11 +1,9 @@
-from flask import Blueprint
+from flask import Blueprint, request, jsonify
 from modules.hospede.dao import DAOHospede
-from modules.hospede.modelo import Hospede
 
 hospede_controller = Blueprint('hospede_controller', __name__)
 dao_hospede = DAOHospede()
 module_name = 'hospede'
-
 
 def get_hospedes():
     hospedes = dao_hospede.get_all()
@@ -21,7 +19,7 @@ def get_hospede_by_id(id):
         response.status_code = 200
         return response
     else:
-        response = jsonify('Hospede nao encontrado - [ID]')
+        response = jsonify({'message': 'Hospede nao encontrado - [ID]'})
         response.status_code = 404
         return response
 
@@ -32,12 +30,9 @@ def get_hospede_by_cpf(cpf):
         response.status_code = 200
         return response
     else:
-        response = jsonify('Hospede nao encontrado - [CPF]')
+        response = jsonify({'message': 'Hospede nao encontrado - [CPF]'})
         response.status_code = 404
         return response
-
-from flask import request, jsonify
-
 
 def criar_hospede():
     hospedes = request.get_json()
@@ -72,19 +67,14 @@ def criar_hospede():
         elif dao_hospede.get_by_telefone(telefone):
             erros.append(f'Hospede com telefone {telefone} já cadastrado')
 
-        if erros:
-            response = jsonify({'errors': erros})
-            response.status_code = 400
-            return response
+    if erros:
+        response = jsonify({'errors': erros})
+        response.status_code = 400
+        return response
 
-        hospede_objeto = Hospede(cpf=cpf, nome=nome, email=email, telefone=telefone)
-        dao_hospede.criar(hospede_objeto)
-        print(hospede_objeto)
-
-    response = jsonify('Hospede criado com sucesso')
+    response = jsonify({"message": "Hospede Criado!"})
     response.status_code = 201
     return response
-
 
 def update_hospede(cpf):
     novo_hospede_dados = request.get_json()
@@ -112,18 +102,20 @@ def update_hospede(cpf):
 
     return response
 
-
 def delete_hospede(cpf):
     if not cpf:
-        response = jsonify({"message": "CPF errado ou nao fornecido!"})
+        response = jsonify({"error": "CPF errado ou nao fornecido!"})
         response.status_code = 400
         return response
-    dao_hospede.delete_hospede_by_cpf(cpf)
-    response = jsonify({"message": "Hospede deletado!"})
-    response.status_code = 200
-    return response
 
-
+    if dao_hospede.delete_hospede_by_cpf(cpf):
+        response = jsonify({"message": "Hospede deletado!"})
+        response.status_code = 200
+        return response
+    else:
+        response = jsonify({"error": "Hospede nao encontrado"})
+        response.status_code = 404
+        return response
 
 @hospede_controller.route(f'/{module_name}/', methods=['GET'])
 def get_all_hospede():
@@ -134,11 +126,10 @@ def get_all_hospede():
 
 @hospede_controller.route(f'/{module_name}/create/', methods=['POST'])
 def create_hospede():
-    #cpf = request.args.get('cpf')
     return criar_hospede()
 
 @hospede_controller.route(f'/{module_name}/delete/<string:cpf>/', methods=['DELETE'])
-def get_delete_hospede(cpf):
+def method_delete_hospede(cpf):
     if request.method == 'DELETE':
         return delete_hospede(cpf)
 
@@ -151,6 +142,5 @@ def get_hospede_cpf(cpf):
     return get_hospede_by_cpf(cpf)
 
 @hospede_controller.route(f'/{module_name}/update/<cpf>/', methods=['PUT'])
-def get_update_hospede(cpf):
+def put_update_hospede(cpf):
     return update_hospede(cpf)
-
