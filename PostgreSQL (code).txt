@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS reserva (
     saida DATE NOT NULL,
     valor DECIMAL(10, 2) NOT NULL,
     quarto_id INT REFERENCES quarto (ID),
-    hospede_id INT REFERENCES hospede (ID)
-
+    hospede_id INT REFERENCES hospede (ID),
+    hotel_id INT REFERENCES hotel (ID)
 );
 
 
@@ -38,9 +38,3 @@ INSERT INTO hotel (nome, rua, bairro, cidade) VALUES
 	
 INSERT INTO quarto (numero, capacidade, disponivel, hotel_id) VALUES
     (1, 2, TRUE, 1);
-
-INSERT INTO hospede (nome, email, cpf, telefone) VALUES
-    ('Nicolas Borges', 'nicolas.borges@ufrpe.br', '12647855420', '87981537586');
-	
-INSERT INTO reserva (entrada, saida, valor, quarto_id, hospede_id) VALUES
-    ('2024-05-01', '2024-05-07', 500.00, 1, 1);
