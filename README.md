@@ -17,6 +17,30 @@
 - cpf: CPF do hóspede.
 - telefone: Telefone do hóspede.
 
+## Tabela: Hotel
+
+- id: Chave primária, não repetível e autoincrementada pelo banco de dados.
+- nome: Nome do hotel.
+- rua: Rua do hotel
+- bairro: Bairro do hotel.
+- cidade: Cidade onde o hotel está localizado.
+
+## Tabela: Quarto
+
+- id: Chave primária, não repetível e autoincrementada pelo banco de dados.
+- numero: Número do quarto
+- capacidade: Capacidade de alocação de pessoas no quarto.
+- disponível: Verificar se o quarto está disponível.
+- hotel_id: ID do quarto que está relacionado ao Hotel.
+
+## Tabela: Reserva
+
+- id: Chave primária, não repetível e autoincrementada pelo banco de dados.
+- entrada: Data da entrada do hospede.
+- saida: Data da saida do hospede.
+- valor: Valor da reserva em relação ao quarto.
+- quarto_id: ID do quarto onde a reserva foi marcada.
+- hospede_id: ID do hoespede que fez a reserva.
 # Endpoints da API
 
 ## Endpoint: Hospede
