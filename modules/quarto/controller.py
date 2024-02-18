@@ -37,7 +37,7 @@ def criar_quarto():
 
     if erros:
         response = jsonify({'error': ', '.join(erros)})
-        response.status_code = 400  # Bad Request
+        response.status_code = 400
         return response
 
     numero_quarto = dados_quarto['numero']
@@ -45,7 +45,7 @@ def criar_quarto():
 
     if dao_quarto.quarto_existente(numero_quarto, hotel_id):
         response = jsonify({'error': 'Quarto já existente para este hotel'})
-        response.status_code = 409  # Conflict
+        response.status_code = 409
         return response
 
     novo_quarto = Quarto(
@@ -58,11 +58,11 @@ def criar_quarto():
     try:
         dao_quarto.criar(novo_quarto)
         response = jsonify({'message': 'Quarto criado com sucesso'})
-        response.status_code = 201  # Created
+        response.status_code = 201
     except Exception as e:
         print(f'Erro ao criar quarto: {str(e)}')
         response = jsonify({'error': f'Erro ao criar quarto: {str(e)}'})
-        response.status_code = 500  # Internal Server Error
+        response.status_code = 500
 
     return response
 
@@ -100,14 +100,14 @@ def update_quarto(id):
 
     if erros:
         response = jsonify({'error': ', '.join(erros)})
-        response.status_code = 400  # Bad Request
+        response.status_code = 400
         return response
 
     quarto_existente = dao_quarto.get_by_id(id)
 
     if not quarto_existente:
         response = jsonify({f'Quarto com ID {id} não encontrado.'})
-        response.status_code = 404  # Not Found
+        response.status_code = 404
         return response
 
     for key, value in dados_quarto.items():
@@ -125,11 +125,11 @@ def update_quarto(id):
     try:
         dao_quarto.update_quarto(quarto_atualizado)
         response = jsonify({'message': 'Quarto atualizado com sucesso'})
-        response.status_code = 200  # OK
+        response.status_code = 200 
     except Exception as e:
         print(f'Erro ao atualizar quarto: {str(e)}')
         response = jsonify({'error': f'Erro ao atualizar quarto: {str(e)}'})
-        response.status_code = 500  # Internal Server Error
+        response.status_code = 500
 
     return response
 
@@ -156,3 +156,21 @@ def get_id(id):
 @quarto_controller.route(f'/{module_name}/update/<int:id>/', methods=['PUT'])
 def put_update_quarto(id):
     return update_quarto(id)
+
+@quarto_controller.route(f'/{module_name}/disponiveis/<string:disponivel>/', methods=['GET'])
+def get_quartos_disponiveis(disponivel):
+    if request.method == 'GET':
+        if disponivel.lower() == 'true':
+            quartos = [quarto.__dict__ for quarto in dao_quarto.get_all() if quarto.disponivel]
+        elif disponivel.lower() == 'false':
+            quartos = [quarto.__dict__ for quarto in dao_quarto.get_all() if not quarto.disponivel]
+        else:
+            response = jsonify({'error': 'Valor inválido para o parâmetro "disponivel" (deve ser "true" ou "false")'})
+            response.status_code = 400
+            return response
+            
+        response = jsonify(quartos)
+        response.status_code = 200
+        return response
+    else:
+        return jsonify({'message': 'Método não existente', 'status_code': 404})
