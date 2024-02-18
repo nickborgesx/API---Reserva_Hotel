@@ -66,3 +66,13 @@ class DAOQuarto(SQLQuarto):
         cursor = self.connection.cursor()
         cursor.execute(query, (id,))
         self.connection.commit()
+
+    def get_quartos_by_hotel(self, hotel_id):
+        query = self._SELECT_QUARTOS_BY_HOTEL
+        with self.connection.cursor() as cursor:
+            cursor.execute(query, (hotel_id,))
+            results = cursor.fetchall()
+            cols = [desc[0] for desc in cursor.description]
+            results = [dict(zip(cols, i)) for i in results]
+            results = [Quarto(**i) for i in results]
+            return results
