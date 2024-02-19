@@ -57,14 +57,29 @@ def criar_reserva():
     response.status_code = 201
     return response
 
-def delete_reserva(id):
-    if not id:
-        response = jsonify({"ID não fornecido!"})
+def delete_reserva(hotel_id, id):
+    if not hotel_id or not id:
+        response = jsonify({"error": "ID do hotel ou da reserva incorreto ou não fornecido!"})
         response.status_code = 400
         return response
-    dao_reserva.delete_by_id(id)
-    response = jsonify({"message": "Reserva deletada!"})
-    response.status_code = 200
+
+    reserva_existente = dao_reserva.get_by_id(id)
+
+    if not reserva_existente or reserva_existente.hotel_id != hotel_id:
+        response_data = f"Reserva com o ID {id} não encontrada para o hotel com ID {hotel_id}"
+        response_status = 404
+    else:
+        try:
+            dao_reserva.delete_by_id(id)
+            response_data = "Reserva deletada!"
+            response_status = 200
+        except Exception as e:
+            print(f'Erro ao deletar reserva: {str(e)}')
+            response_data = f'Erro ao deletar reserva: {str(e)}'
+            response_status = 500
+
+    response = jsonify({"message": response_data})
+    response.status_code = response_status
     return response
 
 import logging
@@ -143,9 +158,9 @@ def get_all_reserva():
 def c_reserva():
     return criar_reserva()
 
-@reserva_controller.route(f'/{module_name}/delete/<int:id>/', methods=['DELETE'])
-def method_delete_reserva(id):
-    return delete_reserva(id)
+@reserva_controller.route(f'/{module_name}/delete/<int:hotel_id>/<int:id>/', methods=['DELETE'])
+def method_delete_reserva(hotel_id, id):
+    return delete_reserva(hotel_id, id)
 
 @reserva_controller.route(f'/{module_name}/<int:id>/', methods=['GET'])
 def get_id(id):
