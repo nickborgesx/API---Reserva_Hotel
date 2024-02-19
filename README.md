@@ -6,6 +6,8 @@
 - Hotel - Representa os hotéis.
 - Quarto - Representa os quartos do hotel onde as reservas serão efetuadas.
 - Reserva - Representa a reserva de um ou mais quartos.
+  
+![Ilustração do SQL](https://drawsql.app/teams/nicolas-20/diagrams/sistema-hotel)
 
 # Tabelas:
 
