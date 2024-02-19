@@ -14,19 +14,19 @@ def get_quartos():
     response.status_code = 200
     return response
 
-def get_quarto_by_id(id):
-    quarto = dao_quarto.get_by_id(id)
-    if quarto:
-        response = jsonify(quarto.__dict__)
+
+def get_quartos_by_hotel_id(hotel_id):
+    quartos = dao_quarto.get_quartos_by_hotel(hotel_id)
+
+    if quartos:
+        results = [quarto.__dict__ for quarto in quartos]
+        response = jsonify(results)
         response.status_code = 200
         return response
     else:
-        response = jsonify('quarto nao encontrado - [ID]')
+        response = jsonify(f'Nenhum quarto encontrado para o hotel com ID {hotel_id}')
         response.status_code = 404
         return response
-
-
-from flask import jsonify
 
 def criar_quarto():
     dados_quarto = request.get_json()
@@ -37,7 +37,7 @@ def criar_quarto():
 
     if erros:
         response = jsonify({'error': ', '.join(erros)})
-        response.status_code = 400
+        response.status_code = 400  # Bad Request
         return response
 
     numero_quarto = dados_quarto['numero']
@@ -45,7 +45,7 @@ def criar_quarto():
 
     if dao_quarto.quarto_existente(numero_quarto, hotel_id):
         response = jsonify({'error': 'Quarto já existente para este hotel'})
-        response.status_code = 409
+        response.status_code = 409  # Conflict
         return response
 
     novo_quarto = Quarto(
@@ -58,24 +58,24 @@ def criar_quarto():
     try:
         dao_quarto.criar(novo_quarto)
         response = jsonify({'message': 'Quarto criado com sucesso'})
-        response.status_code = 201
+        response.status_code = 201  # Created
     except Exception as e:
         print(f'Erro ao criar quarto: {str(e)}')
         response = jsonify({'error': f'Erro ao criar quarto: {str(e)}'})
-        response.status_code = 500
+        response.status_code = 500  # Internal Server Error
 
     return response
 
-def delete_quarto(id):
-    if not id:
-        response = jsonify({"error": "ID errado ou nao fornecido!"})
+def delete_quarto(hotel_id, id):
+    if not hotel_id or not id:
+        response = jsonify({"error": "ID ou hotel_id incorreto ou não fornecido!"})
         response.status_code = 400
         return response
 
     quarto_existente = dao_quarto.get_by_id(id)
 
-    if not quarto_existente:
-        response_data = f"Quarto com o ID {id} nao encontrado"
+    if not quarto_existente or quarto_existente.hotel_id != hotel_id:
+        response_data = f"Quarto com o ID {id} não encontrado para o hotel com ID {hotel_id}"
         response_status = 404
     else:
         try:
@@ -91,23 +91,23 @@ def delete_quarto(id):
     response.status_code = response_status
     return response
 
-def update_quarto(id):
+def update_quarto(hotel_id, id):
     dados_quarto = request.get_json()
     erros = []
 
-    if 'numero' not in dados_quarto or 'capacidade' not in dados_quarto or 'disponivel' not in dados_quarto or 'hotel_id' not in dados_quarto:
-        erros.append('Os campos numero, capacidade, disponivel e hotel_id são obrigatórios.')
+    if 'numero' not in dados_quarto or 'capacidade' not in dados_quarto or 'disponivel' not in dados_quarto:
+        erros.append('Os campos numero, capacidade e disponivel são obrigatórios.')
 
     if erros:
         response = jsonify({'error': ', '.join(erros)})
-        response.status_code = 400
+        response.status_code = 400  # Bad Request
         return response
 
     quarto_existente = dao_quarto.get_by_id(id)
 
-    if not quarto_existente:
-        response = jsonify({f'Quarto com ID {id} não encontrado.'})
-        response.status_code = 404
+    if not quarto_existente or quarto_existente.hotel_id != hotel_id:
+        response = jsonify({f'Quarto com ID {id} não encontrado para o hotel com ID {hotel_id}.'})
+        response.status_code = 404  # Not Found
         return response
 
     for key, value in dados_quarto.items():
@@ -118,18 +118,18 @@ def update_quarto(id):
         numero=dados_quarto['numero'],
         capacidade=dados_quarto['capacidade'],
         disponivel=dados_quarto['disponivel'],
-        hotel_id=dados_quarto['hotel_id'],
+        hotel_id=hotel_id,
         id=id
     )
 
     try:
         dao_quarto.update_quarto(quarto_atualizado)
         response = jsonify({'message': 'Quarto atualizado com sucesso'})
-        response.status_code = 200 
+        response.status_code = 200  # OK
     except Exception as e:
         print(f'Erro ao atualizar quarto: {str(e)}')
         response = jsonify({'error': f'Erro ao atualizar quarto: {str(e)}'})
-        response.status_code = 500
+        response.status_code = 500  # Internal Server Error
 
     return response
 
@@ -145,17 +145,17 @@ def get_all_quarto():
 def create_quarto():
     return criar_quarto()
 
-@quarto_controller.route(f'/{module_name}/delete/<int:id>/', methods=['DELETE'])
-def method_delete_quarto(id):
-    return delete_quarto(id)
+@quarto_controller.route(f'/{module_name}/delete/<int:hotel_id>/<int:id>/', methods=['DELETE'])
+def method_delete_quarto(hotel_id, id):
+    return delete_quarto(hotel_id, id)
 
-@quarto_controller.route(f'/{module_name}/<int:id>/', methods=['GET'])
-def get_id(id):
-    return get_quarto_by_id(id)
+@quarto_controller.route(f'/{module_name}/hotel/<int:hotel_id>/', methods=['GET'])
+def get_quartos_by_hotel_id_route(hotel_id):
+    return get_quartos_by_hotel_id(hotel_id)
 
-@quarto_controller.route(f'/{module_name}/update/<int:id>/', methods=['PUT'])
-def put_update_quarto(id):
-    return update_quarto(id)
+@quarto_controller.route(f'/{module_name}/update/<int:hotel_id>/<int:id>/', methods=['PUT'])
+def put_update_quarto(hotel_id, id):
+    return update_quarto(hotel_id, id)
 
 @quarto_controller.route(f'/{module_name}/disponiveis/<string:disponivel>/', methods=['GET'])
 def get_quartos_disponiveis(disponivel):
@@ -166,9 +166,9 @@ def get_quartos_disponiveis(disponivel):
             quartos = [quarto.__dict__ for quarto in dao_quarto.get_all() if not quarto.disponivel]
         else:
             response = jsonify({'error': 'Valor inválido para o parâmetro "disponivel" (deve ser "true" ou "false")'})
-            response.status_code = 400
+            response.status_code = 400  # Bad Request
             return response
-            
+
         response = jsonify(quartos)
         response.status_code = 200
         return response
