@@ -43,18 +43,77 @@
 - hospede_id: ID do hoespede que fez a reserva.
 # Endpoints da API
 
+#Endpoints:
+
 ## Endpoint: Hospede
-Hospede/
+hospede/
 > GET: Retorna todos os hóspedes cadastrados.
 
-Hospede/id/+id
+hospede/id/+id
 > GET: Retorna informações de um hóspede com base no ID escolhido.
 
-Hospede/create
-> POST: Cria um novo hóspede, passando os parâmetros escolhidos.
+hospede/create
+> POST: Cria um novo hóspede passando os parâmetros escolhidos.
 
-Hospede/delete/+id
+hospede/delete/+id
 > DELETE: Deleta um hóspede com base no ID escolhido.
 
-Hospede/update/+id
+hospede/update/+id
 > PUT: Atualiza as informações de um hóspede com base no ID escolhido.
+
+
+## Endpoint: Hotel
+hotel/
+> GET: Retorna todos os hoteis cadastrados.
+
+hotel/id/+id
+> GET: Retorna informações de um hotel com base no ID escolhido.
+
+hotel/create
+> POST: Cria um novo hotel passando os parâmetros escolhidos.
+
+hotel/delete/+id
+> DELETE: Deleta um hotel com base no ID escolhido.
+
+hospede/update/+id
+> PUT: Atualiza as informações de um hotel com base no ID escolhido.
+
+
+## Endpoint: Quarto
+quarto/
+> GET: Retorna todos os quartos cadastrados em todos os hoteis.
+
+quarto/+hotel_id/+id
+> GET: Retorna informações de um quarto com base nos ID's escolhidos.
+
+quarto/create
+> POST: Cria um novo quarto passando os parâmetros escolhidos.
+
+quarto/delete/+hotel_id/+id
+> DELETE: Deleta um quarto com base nos ID's escolhidos.
+
+quarto/update/+hotel_id/+id
+> PUT: Atualiza as informações de um quarto com base nos ID's escolhidos.
+
+quarto/disponiveis/"true or false"
+> GET: Verifica todos os quartos que estão disponíveis ou não.
+
+## Endpoint: Reserva
+reserva/
+> GET: Retorna todas as reservas dos hoteis.
+
+reserva/+hotel_id
+> GET: Retorna todas as reservas de um hotel determinado.
+
+reserva/+id
+> GET: Retorna uma reserva de com o id determinado independente do hotel escolhido.
+
+reserva/create
+> POST: Cria uma nova reserva passando os parâmetros escolhidos.
+
+reserva/update/+hotel_id/+id
+> PUT: Atualiza as informações de uma reserva com base nos ID's escolhidos.
+
+reserva/delete/+hotel_id/+id
+> DELETE: Deleta uma reeserva com base nos ID's escolhidos.
+
