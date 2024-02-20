@@ -117,23 +117,21 @@ def delete_hospede(cpf):
         response.status_code = 404
         return response
 
-@hospede_controller.route(f'/{module_name}/', methods=['GET'])
+@hospede_controller.route(f'/{module_name}/', methods=['GET', 'POST'])
 def get_all_hospede():
     if request.method == 'GET':
         return get_hospedes()
+    elif request.method == 'POST':
+        return criar_hospede()
     else:
         return jsonify({'message': 'Método não existente', 'status_code': 404})
-
-@hospede_controller.route(f'/{module_name}/create/', methods=['POST'])
-def create_hospede():
-    return criar_hospede()
 
 @hospede_controller.route(f'/{module_name}/delete/<string:cpf>/', methods=['DELETE'])
 def method_delete_hospede(cpf):
     if request.method == 'DELETE':
         return delete_hospede(cpf)
 
-@hospede_controller.route(f'/{module_name}/<int:id>/', methods=['GET'])
+@hospede_controller.route(f'/{module_name}/id/<int:id>/', methods=['GET'])
 def get_hospede_id(id):
     return get_hospede_by_id(id)
 
