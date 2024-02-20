@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify
 from modules.hotel.dao import DAOHotel
 from modules.hotel.modelo import Hotel
-from modules.hotel.sql import SQLHotel
 
 hotel_controller = Blueprint('hotel_controller', __name__)
 dao_hotel = DAOHotel()
@@ -34,7 +33,7 @@ def criar_hotel():
 
     if erros:
         response = jsonify({'error': ', '.join(erros)})
-        response.status_code = 400
+        response.status_code = 400  # Bad Request
         return response
 
     novo_hotel = Hotel(
@@ -47,11 +46,11 @@ def criar_hotel():
     try:
         dao_hotel.criar(novo_hotel)
         response = jsonify({'message': 'Hotel criado com sucesso'})
-        response.status_code = 201
+        response.status_code = 201  # Created
     except Exception as e:
         print(f'Erro ao criar hotel: {str(e)}')
         response = jsonify({'error': f'Erro ao criar hotel: {str(e)}'})
-        response.status_code = 500 
+        response.status_code = 500  # Internal Server Error
 
     return response
 def delete_hotel(id):
@@ -89,7 +88,7 @@ def update_hotel(id):
 
     if erros:
         response = jsonify({'error': ', '.join(erros)})
-        response.status_code = 400
+        response.status_code = 400  # Bad Request
         return response
 
     hotel_existente = dao_hotel.get_by_id(id)
@@ -109,31 +108,31 @@ def update_hotel(id):
 
     try:
         dao_hotel.update_hotel(hotel_atualizado)
-        response = jsonify({'Hotel atualizado com sucesso'})
-        response.status_code = 200  # OK
+        response = jsonify({'menssage':'Hotel atualizado com sucesso'})
+        response.status_code = 200
     except Exception as e:
-        print(f'Erro ao atualizar hotel: {str(e)}')
-        response = jsonify({'error': f'Erro ao atualizar hotel: {str(e)}'})
+        error_message = str(e)
+        print(f'Erro ao atualizar hotel: {error_message}')
+        response = jsonify({'error': f'Erro ao atualizar hotel: {error_message}'})
         response.status_code = 500
 
     return response
 
-@hotel_controller.route(f'/{module_name}/', methods=['GET'])
+@hotel_controller.route(f'/{module_name}/', methods=['GET', 'POST'])
 def get_all_hotel():
     if request.method == 'GET':
         return get_hoteis()
+    elif request.method == 'POST':
+        return criar_hotel()
     else:
         return jsonify({'message': 'Método não existente', 'status_code': 404})
 
-@hotel_controller.route(f'/{module_name}/create/', methods=['POST'])
-def create_hotel():
-    return criar_hotel()
 
 @hotel_controller.route(f'/{module_name}/delete/<int:id>/', methods=['DELETE'])
 def method_delete_hotel(id):
     return delete_hotel(id)
 
-@hotel_controller.route(f'/{module_name}/<int:id>/', methods=['GET'])
+@hotel_controller.route(f'/{module_name}/id/<int:id>/', methods=['GET'])
 def get_id(id):
     return get_hotel_by_id(id)
 
