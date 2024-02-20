@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from modules.quarto.dao import DAOQuarto
 from modules.quarto.modelo import Quarto
+from modules.hotel.dao import DAOHotel
 
 quarto_controller = Blueprint('quarto_controller', __name__)
 dao_quarto = DAOQuarto()
@@ -8,24 +9,46 @@ module_name = 'quarto'
 
 
 def get_quartos():
-    quartos = dao_quarto.get_all()
-    results = [quarto.__dict__ for quarto in quartos]
-    response = jsonify(results)
-    response.status_code = 200
-    return response
+    dao_hotel = DAOHotel()
+    query = DAOQuarto._SELECT_ALL
+    with dao_quarto.connection.cursor() as cursor:
+        cursor.execute(query)
+        results = cursor.fetchall()
+        cols = [desc[0] for desc in cursor.description]
+        quartos = [Quarto(**dict(zip(cols, i))) for i in results]
+        for quarto in quartos:
+            hotel = dao_hotel.get_by_id(quarto.hotel_id)
+            if hotel:
+                quarto.hotel = hotel.__dict__
+        results = [quarto.__dict__ for quarto in quartos]
+        if results:
+            response = jsonify(results)
+            response.status_code = 200
+        else:
+            response = jsonify('Nenhum quarto encontrado.')
+            response.status_code = 404
+        return response
 
 
 def get_quartos_by_hotel_id(hotel_id):
-    quartos = dao_quarto.get_quartos_by_hotel(hotel_id)
-
-    if quartos:
+    dao_hotel = DAOHotel()
+    query = DAOQuarto._SELECT_QUARTOS_BY_HOTEL
+    with dao_quarto.connection.cursor() as cursor:
+        cursor.execute(query, (hotel_id,))
+        results = cursor.fetchall()
+        cols = [desc[0] for desc in cursor.description]
+        quartos = [Quarto(**dict(zip(cols, i))) for i in results]
+        for quarto in quartos:
+            hotel = dao_hotel.get_by_id(quarto.hotel_id)
+            if hotel:
+                quarto.hotel = hotel.__dict__
         results = [quarto.__dict__ for quarto in quartos]
-        response = jsonify(results)
-        response.status_code = 200
-        return response
-    else:
-        response = jsonify(f'Nenhum quarto encontrado para o hotel com ID {hotel_id}')
-        response.status_code = 404
+        if results:
+            response = jsonify(results)
+            response.status_code = 200
+        else:
+            response = jsonify(f'Nenhum quarto encontrado para o hotel com ID {hotel_id}')
+            response.status_code = 404
         return response
 
 def criar_quarto():
