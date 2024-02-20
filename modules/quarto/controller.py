@@ -134,26 +134,24 @@ def update_quarto(hotel_id, id):
     return response
 
 
-@quarto_controller.route(f'/{module_name}/', methods=['GET'])
+@quarto_controller.route(f'/{module_name}/', methods=['GET', 'POST'])
 def get_all_quarto():
     if request.method == 'GET':
         return get_quartos()
+    elif request.method == 'POST':
+        return criar_quarto()
     else:
         return jsonify({'message': 'Método não existente', 'status_code': 404})
 
-@quarto_controller.route(f'/{module_name}/create/', methods=['POST'])
-def create_quarto():
-    return criar_quarto()
-
-@quarto_controller.route(f'/{module_name}/delete/<int:hotel_id>/<int:id>/', methods=['DELETE'])
+@quarto_controller.route(f'/{module_name}/delete/hotel/<int:hotel_id>/id/<int:id>/', methods=['DELETE'])
 def method_delete_quarto(hotel_id, id):
     return delete_quarto(hotel_id, id)
 
-@quarto_controller.route(f'/{module_name}/hotel/<int:hotel_id>/', methods=['GET'])
+@quarto_controller.route(f'/{module_name}/hotel/id/<int:hotel_id>/', methods=['GET'])
 def get_quartos_by_hotel_id_route(hotel_id):
     return get_quartos_by_hotel_id(hotel_id)
 
-@quarto_controller.route(f'/{module_name}/update/<int:hotel_id>/<int:id>/', methods=['PUT'])
+@quarto_controller.route(f'/{module_name}/update/hotel/<int:hotel_id>/id/<int:id>/', methods=['PUT'])
 def put_update_quarto(hotel_id, id):
     return update_quarto(hotel_id, id)
 
