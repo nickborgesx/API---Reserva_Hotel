@@ -156,7 +156,7 @@ def get_all_reserva():
     else:
         return jsonify({'message': 'Método não existente', 'status_code': 404})
 
-@reserva_controller.route(f'/{module_name}/delete/<int:hotel_id>/<int:id>/', methods=['DELETE'])
+@reserva_controller.route(f'/{module_name}/delete/hotel/<int:hotel_id>/id/<int:id>/', methods=['DELETE'])
 def method_delete_reserva(hotel_id, id):
     return delete_reserva(hotel_id, id)
 
