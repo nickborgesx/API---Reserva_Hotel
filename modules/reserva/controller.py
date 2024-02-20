@@ -147,26 +147,24 @@ def get_reservas_by_hotel(hotel_id):
     response.status_code = 200
     return response
 
-@reserva_controller.route(f'/{module_name}/', methods=['GET'])
+@reserva_controller.route(f'/{module_name}/', methods=['GET', 'POST'])
 def get_all_reserva():
     if request.method == 'GET':
         return get_reservas()
+    elif request.method == 'POST':
+        return criar_reserva()
     else:
         return jsonify({'message': 'Método não existente', 'status_code': 404})
-
-@reserva_controller.route(f'/{module_name}/create/', methods=['POST'])
-def c_reserva():
-    return criar_reserva()
 
 @reserva_controller.route(f'/{module_name}/delete/<int:hotel_id>/<int:id>/', methods=['DELETE'])
 def method_delete_reserva(hotel_id, id):
     return delete_reserva(hotel_id, id)
 
-@reserva_controller.route(f'/{module_name}/<int:id>/', methods=['GET'])
+@reserva_controller.route(f'/{module_name}/id/<int:id>/', methods=['GET'])
 def get_id(id):
     return get_reserva_by_id(id)
 
-@reserva_controller.route(f'/{module_name}/update/<int:hotel_id>/<int:id>/', methods=['PUT'])
+@reserva_controller.route(f'/{module_name}/update/hotel/<int:hotel_id>/id/<int:id>/', methods=['PUT'])
 def update_reserva(hotel_id, id):
     return put_update_reserva(hotel_id, id)
 
