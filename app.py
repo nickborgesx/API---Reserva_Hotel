@@ -14,5 +14,6 @@ app.register_blueprint(hotel_controller)
 app.register_blueprint(quarto_controller)
 app.register_blueprint(reserva_controller)
 
-Connect().init_database('v1')
+Connect().create_table()
+Connect().init_database()
 app.run(debug=True)
